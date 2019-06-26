@@ -15,7 +15,7 @@ func DataBankHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodGet {
-		dataBank, err := getDataBank()
+		dataBank, err := DataBank()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -31,7 +31,7 @@ func DataBankHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "", http.StatusBadRequest)
 }
 
-func getDataBank() ([]*Data, error) {
+func DataBank() ([]*Data, error) {
 	// var result string
 	url := "https://www.atmbersama.com/layanan"
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
