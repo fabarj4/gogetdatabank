@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type Data struct {
@@ -33,14 +34,26 @@ func DataBankHandler(w http.ResponseWriter, r *http.Request) {
 
 func DataBank() ([]*Data, error) {
 	// var result string
+	var result []*Data
 	url := "https://www.atmbersama.com/layanan"
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
-	res, _ := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return result, err
+	}
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
 	temp := string(body)
-	jsonString := temp[48812:52467]
-	var result []*Data
+	// fmt.Println(temp)
+
+	// out := strings.TrimLeft(strings.TrimRight(temp, "];"), "var bank_code = [")
+	// fmt.Println(out)
+	startIndex := strings.Index(temp, "bank_code")
+	lastIndex := strings.Index(temp, "];")
+	jsonString := ""
+	if startIndex != -1 && lastIndex != -1 {
+		jsonString = temp[startIndex+12 : lastIndex+1]
+	}
 	if err := json.Unmarshal([]byte(jsonString), &result); err != nil {
 		return result, err
 	}
