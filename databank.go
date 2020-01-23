@@ -64,7 +64,6 @@ func DataBank() ([]*Data, error) {
 	if startIndex != -1 && lastIndex != -1 {
 		jsonString = temp[startIndex+12 : lastIndex+1]
 	}
-	fmt.Println(jsonString)
 	if err := json.Unmarshal([]byte(jsonString), &result); err != nil {
 		return result, err
 	}
