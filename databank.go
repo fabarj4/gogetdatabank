@@ -2,6 +2,7 @@ package gogetdatabank
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -49,11 +50,21 @@ func DataBank() ([]*Data, error) {
 	// out := strings.TrimLeft(strings.TrimRight(temp, "];"), "var bank_code = [")
 	// fmt.Println(out)
 	startIndex := strings.Index(temp, "bank_code")
-	lastIndex := strings.Index(temp, "];")
+	lastIndex := 0
+	for i := startIndex; i < len(temp); i++ {
+		if string(temp[i]) == "]" {
+			lastIndex = i
+			break
+		}
+	}
+	if lastIndex == 0 {
+		return nil, fmt.Errorf("error get data from atm bersama")
+	}
 	jsonString := ""
 	if startIndex != -1 && lastIndex != -1 {
 		jsonString = temp[startIndex+12 : lastIndex+1]
 	}
+	fmt.Println(jsonString)
 	if err := json.Unmarshal([]byte(jsonString), &result); err != nil {
 		return result, err
 	}
